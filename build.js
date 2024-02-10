@@ -1,14 +1,18 @@
 var fs = require("fs");
 var path = require("path");
-var pako = require("./pako");
 
-var srcPath = path.join(__dirname, 'Font-Awesome/svgs/solid');
+var srcPath = path.join(__dirname, 'Font-Awesome/svgs/regular');
+var srcBrandsPath = path.join(__dirname, 'Font-Awesome/svgs/brands');
 var distPath = path.join(__dirname, 'dist');
 
 var mxGraphXml = fs.readFileSync(path.join(__dirname, 'wrapper.xml'), 'utf-8').replace(/>\s+</g, '><');
 var svgIcons = fs.readdirSync(srcPath).map(function (p) {
   return { name: p, contents: fs.readFileSync(path.join(srcPath, p), "utf-8") };
 });
+
+function deflateRaw (t, e) {
+  return ((e = e || {}).raw = true), i(t, e)
+}
 
 function mxLibraryEntry(svg, color) {
   // Create a color lookup table to convert web standard color names to hex values
@@ -38,7 +42,7 @@ function mxLibraryEntry(svg, color) {
   // Unlike the btoa method in web browsers, the Buffer.toString method can be fed an int array, and
   // doesn't require a bytesToString conversion
   var xml = Buffer.from(
-    pako.deflateRaw(encodeURIComponent(mxGraphXml.replace('%xml%', b64EncodedSvg)))
+    deflateRaw(encodeURIComponent(mxGraphXml.replace('%xml%', b64EncodedSvg)))
   ).toString("base64");
 
   return {
